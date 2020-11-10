@@ -14,9 +14,9 @@ The default setup of the file system is as follows:
 	|- IMUData				                > data folder.
 		|- 20201104_1_example trial	    > example folder containing data for one trial.
 		|- setup.txt			              > has to be copied into every trial folder. 
-	|-_MoveShelf_IMU_operator.py	    > interactive script to execute analysis.
+	|- MoveShelf_IMU_operator.py	    > interactive script to execute analysis.
 	|- api.py				                  > MoveShelf’s API, adjusted to this application.
-|- mvshlf-api-key.jso	              > You have to import your own api-key from your MoveShelf account.
+	|- mvshlf-api-key.jso	              > You have to import your own api-key from your MoveShelf account.
 	|- OpenSense_Main.py			        > main function.		
 	|- OpenSim_model.osim		          > OpenSim model. You can add your own.
 	|- OS_CalibrateModel.py		        \ 
