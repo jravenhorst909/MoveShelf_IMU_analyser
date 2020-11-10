@@ -1,0 +1,8 @@
+device = ''			# phone operating system 'apple' or 'android'?
+freq =  			# sampling frequency of IMUs [Hz]
+t_calib =  			# timepoint in measurement when calibration pose is performed, [s]
+t_range = [,]			# time range to process/visualize, [s]
+
+
+# list body segments to corresponding imus. in imu order (increasing number): ['imu_01', 'imu_02', 'imu_03' ...
+IMUs = [] 
