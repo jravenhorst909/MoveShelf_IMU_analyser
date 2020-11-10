@@ -9,7 +9,7 @@ You can do full body analysis, but “OS_investigateJoints.py” is in this vers
 2.	Folders and files
 The default setup of the file system is as follows:
 
-- MoveShelf_IMU_analyser	\t> main folder, place it anywhere on computer.
+- MoveShelf_IMU_analyser	> main folder, place it anywhere on computer.
 	- Geometry				                > folder supportive to OpenSim model.
 	- IMUData				                > data folder.
 		- 20201104_1_example trial	    > example folder containing data for one trial.
