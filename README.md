@@ -10,28 +10,28 @@ You can do full body analysis, but “OS_investigateJoints.py” is in this vers
 The default setup of the file system is as follows:
 
 - MoveShelf_IMU_analyser		        > main folder, place it anywhere on computer.
-- Geometry				                > folder supportive to OpenSim model.
-- IMUData				                > data folder.
-- 20201104_1_example trial	    > example folder containing data for one trial.
-- setup.txt			              > has to be copied into every trial folder. 
-- MoveShelf_IMU_operator.py	    > interactive script to execute analysis.
-- api.py				                  > MoveShelf’s API, adjusted to this application.
-- mvshlf-api-key.jso	              > You have to import your own api-key from your MoveShelf account.
-- OpenSense_Main.py			        > main function.		
-- OpenSim_model.osim		          > OpenSim model. You can add your own.
-- OS_CalibrateModel.py 
-- OS_createAngles_json.py
-- OS_csv_to_txt.py
-- OS_custom_IMU_placer.py
-- OS_IMUDataConversion.py
-- OS_IMUmappings.py
-- OS_Interpolation_lin_Vicon.py	  > support functions.
-- OS_Interpolation_lin_Xsens.py
-- OS_investigateJoints.py
-- OS_InvKin.py
-- OS_plotangles.py
-- OS_reset_heading.py
-- OS_sync_tridents.py
+	- Geometry				                > folder supportive to OpenSim model.
+	- IMUData				                > data folder.
+		- 20201104_1_example trial	    > example folder containing data for one trial.
+		- setup.txt			              > has to be copied into every trial folder. 
+	- MoveShelf_IMU_operator.py	    > interactive script to execute analysis.
+	- api.py				                  > MoveShelf’s API, adjusted to this application.
+	- mvshlf-api-key.json	              > You have to import your own api-key from your MoveShelf account.
+	- OpenSense_Main.py			        > main function.		
+	- OpenSim_model.osim		          > OpenSim model. You can add your own.
+	- OS_CalibrateModel.py 
+	- OS_createAngles_json.py
+	- OS_csv_to_txt.py
+	- OS_custom_IMU_placer.py
+	- OS_IMUDataConversion.py
+	- OS_IMUmappings.py
+	- OS_Interpolation_lin_Vicon.py	  > support functions.
+	- OS_Interpolation_lin_Xsens.py
+	- OS_investigateJoints.py
+	- OS_InvKin.py
+	- OS_plotangles.py
+	- OS_reset_heading.py
+	- OS_sync_tridents.py
 
 2.1.	Main folder:
 - Additional files will be created in this folder upon processing trials. If these already exist, they will be overwritten:
