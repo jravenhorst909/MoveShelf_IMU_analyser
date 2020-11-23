@@ -5,7 +5,7 @@ You can do full body analysis, but “OS_investigateJoints.py” is in this vers
 
 1.	Requirements
 
-1.1	Python 3.7 and OpenSim 4.1. Install the opensim python package as described here. 
+1.1	Python 3.7 and OpenSim 4.1. Install the opensim python package as described here: https://simtk-confluence.stanford.edu/display/OpenSim/Scripting+in+Python#ScriptinginPython-SettingupyourPythonscriptingenvironment 
 
 2.	Folders and files
 The default setup of the file system is as follows:
@@ -23,14 +23,17 @@ The default setup of the file system is as follows:
 	- OS_CalibrateModel.py 
 	- OS_createAngles_json.py
 	- OS_csv_to_txt.py
-	- OS_custom_IMU_placer.py
+	- OS_findFirst_t.py
 	- OS_IMUDataConversion.py
 	- OS_IMUmappings.py
-	- OS_Interpolation_lin_Vicon.py	  > support functions.
-	- OS_Interpolation_lin_Xsens.py
+	- OS_Interpolation_slerp_Vicon.py	  > support functions.
+	- OS_Interpolation_slerp_Xsens.py
 	- OS_investigateJoints.py
 	- OS_InvKin.py
-	- OS_plotangles.py
+	- OS_plotJointangles.py
+	- OS_plotMatrix.py
+	- OS_plotQuaternions.py
+	- OS_plotQuaternions_v2.py
 	- OS_reset_heading.py
 	- OS_sync_tridents.py
 
