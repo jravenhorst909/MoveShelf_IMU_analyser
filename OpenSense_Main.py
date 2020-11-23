@@ -8,6 +8,7 @@ Created on Wed Oct  7 18:42:01 2020
 # Import the opensim libraries
 import os
 import glob
+import time
 import opensim as osim # necessary to read setup file
 from numpy import pi # necessary to read setup file
 from api import MoveshelfApi, Metadata
@@ -19,25 +20,28 @@ from OS_csv_to_txt import csv_to_txt
 from OS_IMUDataConversion import IMUdata_conversion
 from OS_CalibrateModel import calibrate_model
 from OS_InvKin import inv_kinematics
-from OS_custom_IMUplacer import custom_IMUplacer
-from OS_plotangles import plotangles
 from OS_sync_tridents import sync_tridents
 from OS_createAngles_json import createAngles_json
 from OS_investigateJoints import investigateJoints
+from OS_plotJointangles import plotJointangles
+from OS_plotQuaternions import plotQuats
 
 class Application:
     
-    # TrialName = '20201102_1'
-    # modelFileName = 'Rajagopal_2015.osim'   #'gait2392_simbody.osim'        # The path to input model
-    # customIMUplacer = False                        # Use custom IMU placement on calibrated model? just for looks ^^
-    # visulizeCalibration = False                     # Visualize calibrated model?
-    # visualizeTracking = True                       # Visualize motion?
+    TrialName = '20201111_8'
+    modelFileName = 'OpenSim_model.osim'          # The path to input model
+    customIMUplacer = False                        # Use custom IMU placement on calibrated model? just for looks ^^
+    visualizeCalibration = True                     # Visualize calibrated model?
+    visualizeTracking = False                       # Visualize motion?
     
-    # UploadFiles = False                              # Create a new clip and upload all files.
+    UploadFiles = False                              # Create a new clip and upload all files.
     
-    def IMUanalyser(self,TrialName,modelFileName,visulizeCalibration,visualizeTracking,UploadFiles):
-        customIMUplacer = False                        # Use custom IMU placement on calibrated model? just for looks ^^
-    
+    def IMUanalyser(self,TrialName,modelFileName,visualizeCalibration,visualizeTracking,UploadFiles):
+        
+        delay = 60          # after how many seconds is Vicon's heading stable?
+        
+        
+        
         #------------------------------------------------------------------------------
         # %% Setup
         #   -if uploading: to which project?
@@ -63,12 +67,12 @@ class Application:
             print('thanks\n')
             
             
-            
         #---find data and setup
         for x in os.listdir(os.path.dirname(os.path.realpath('__file__'))+'\\IMUData'):    # runs through all directories in IMUData
             if TrialName in x:
                 self._trial_dir_path = os.path.dirname(os.path.realpath('__file__'))+'\\IMUData\\'+x+'\\' # search for directory with 'trial' in its name
                 trial_dir_path = self._trial_dir_path
+        
         
         #---get .csv files
                 files = glob.glob(trial_dir_path+'*.csv')
@@ -78,38 +82,40 @@ class Application:
                     count+=1
         
         
+        #---Xsens or Vicon?
+        if 'DOT' in files[0]:
+            sensor = 'Xsens'
+            delay = 0
+        if 'TS' in files[0]:
+            sensor = 'Vicon'
+            
+            
         #---retrieve trial settings from setup file
         ldic = locals()
         exec(open(trial_dir_path + 'setup.txt','r').read(),globals(),ldic)
         
         device = ldic['device']
         freq = ldic['freq']
-        t_calib = ldic['t_calib']
+        t_calib = ldic['t_calib']-delay
         t_range = ldic['t_range']
         baseIMUName = ''
         baseIMUHeading = ''
         IMUs = ldic['IMUs']
     
         t_range = [t_range[0]-t_calib, t_range[1]-t_calib]
-        sensor_to_opensim_rotation = osim.Vec3(-pi/2,0,0)	# The rotation of IMU data to the OpenSim world frame. !! Only change if subject was not facing x-direction in the calibration pose. 
+        sensor_to_opensim_rotation = osim.Vec3(-pi/2,0,0)	# The rotation of IMU data to the OpenSim world frame. !! Only change if subject/model is not facing x-direction in the calibration pose. 
         
         
         #---which joints are involved?
         joints = investigateJoints(IMUs)
         
         
-        #---Xsens or Vicon?
-        if 'DOT' in files[0]:
-            sensor = 'Xsens'
-        if 'TS' in files[0]:
-            sensor = 'Vicon'
-        
-        
         #---create myIMUmappings.xml
         IMUmappings(sensor,trial_dir_path,files,IMUs)
         
-        #---convert DOT output data .csv files to .txt in useable format (Xsens Awinda)
-        #   and perform heading reset
+        
+        #---convert output data .csv files to .txt in useable format 
+        #   and perform interpolation and heading reset
         count = 0
         t0 = [0]*len(IMUs)
         txtfilenames = [0]*len(IMUs)
@@ -117,17 +123,22 @@ class Application:
         for x in files:
             
             print('{}'.format(IMUs[count]))
-            t0[count],txtfilenames[count] = csv_to_txt(sensor,trial_dir_path, files[count], device, t_calib, freq)
+            t0[count],txtfilenames[count] = csv_to_txt(sensor,trial_dir_path, files[count], device, t_calib, freq, delay, t_range)
             count += 1
             
         if sensor == 'Vicon':
             sync_tridents(t0,txtfilenames,freq)    
+          
             
+          
         #------------------------------------------------------------------------------
         # %% IMUDataConversion
         #   -Create .sto files of orientation, lin acceleration, magnetic north heading, angular velocity.
         #   -If no such data is provided, the file is left empty.
         trialID = IMUdata_conversion(trial_dir_path,TrialName)
+        
+        plotQuats(trial_dir_path, trialID)
+        time.sleep(1)
         
         
         
@@ -135,15 +146,8 @@ class Application:
         # %% CalibrateModel
         #   -Create a calibrated .osim model.
         #   -Optionally use custom IMU placement
-        calibrate_model(trial_dir_path,trialID,modelFileName,sensor_to_opensim_rotation,baseIMUName,baseIMUHeading,visulizeCalibration)
-        
-        if customIMUplacer == True:
-        # overwrite original calibrated .osim model files
-            #   -> this one is to run invkinematics on automatically. This file will be overwritten for each trial using the same 'modelFilename'
-            custom_IMUplacer('calibrated_' + modelFileName)
-            #   -> this one is for storage
-            custom_IMUplacer(trial_dir_path + 'calibrated_' + modelFileName)
-        
+        calibrate_model(trial_dir_path,trialID,modelFileName,sensor_to_opensim_rotation,baseIMUName,baseIMUHeading,visualizeCalibration)
+           
         
         
         #------------------------------------------------------------------------------
@@ -153,10 +157,9 @@ class Application:
         
         
         
-        
         #------------------------------------------------------------------------------
         # %% PlotJointAngles in console
-        #   function: plotangles(trial_dir_path, trialID, angles2plot)
+        #   function: plotJointangles(trial_dir_path, trialID, angles2plot)
         #   lumbar:
         #       'lumbar_extension', 'lumbar_bending', 'lumbar_rotation' 
         #   pelvic:
@@ -168,19 +171,10 @@ class Application:
         #       'arm_flex_r', 'arm_add_r', 'arm_rot_r', 'elbow_flex_r', 'pro_sup_r', 'wrist_flex_r', 'wrist_dev_r' 
         #       'arm_flex_l', 'arm_add_l', 'arm_rot_l', 'elbow_flex_l', 'pro_sup_l', 'wrist_flex_l', 'wrist_dev_l'
         
-        # # figure 1:
+        # # figure example:
         # angles2plot = ['knee_angle_r','knee_angle_l']
-        # plotangles(trial_dir_path, trialID, angles2plot)
+        # plotJointangles(trial_dir_path, trialID, angles2plot)
         
-        # # figure ...:
-        # angles2plot = ['hip_flexion_r','hip_flexion_l']
-        # plotangles(trial_dir_path, trialID, angles2plot)
-        
-        # angles2plot = ['hip_adduction_r','hip_adduction_l']
-        # plotangles(trial_dir_path, trialID, angles2plot)
-        
-        # angles2plot = ['hip_rotation_r','hip_rotation_l']
-        # plotangles(trial_dir_path, trialID, angles2plot)
         
         
         #------------------------------------------------------------------------------
@@ -198,9 +192,8 @@ class Application:
                     clipname = x
             self.clipID = api.uploadEmptyClip(clipname, userProjects[project_no])
             
-            # upload angles
+            # upload joint angle data
             api.uploadAdditionalData(trial_dir_path+'angles.json', self.clipID, 'data', 'angles.json') # uploads additional data, returns data ID
-            
                 
             # upload all files
             for filename in os.listdir(trial_dir_path):

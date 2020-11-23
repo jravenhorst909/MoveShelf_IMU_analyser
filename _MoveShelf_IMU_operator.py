@@ -9,13 +9,13 @@ from OpenSense_Main import Application
 app = Application()
 
 
-TrialName = '20201104_1'                                  # Should include date and trial number.
-modelFileName = 'OpenSim_model.osim'            # The path to input model.
-visulizeCalibration = True                      # Visualize calibrated model?
-visualizeTracking = True                        # Visualize motion?
-UploadFiles = True                              # Create a new clip and upload all files.
+TrialName = '20201120_1'                                  # Should include date and trial number.
+modelFileName = 'OpenSim_model.osim'             # The path to input model.
+visualizeCalibration = True                      # Visualize calibrated model?
+visualizeTracking = False                        # Visualize motion?
+UploadFiles = False                              # Create a new clip and upload all files.
 
-app.IMUanalyser(TrialName,modelFileName,visulizeCalibration,visualizeTracking,UploadFiles)
+app.IMUanalyser(TrialName,modelFileName,visualizeCalibration,visualizeTracking,UploadFiles)
 
 
 
@@ -23,6 +23,5 @@ app.IMUanalyser(TrialName,modelFileName,visulizeCalibration,visualizeTracking,Up
 VideoName = ''                                  # write video filename, including extension.
 
 app.UploadVideo(VideoName)
-
 
 

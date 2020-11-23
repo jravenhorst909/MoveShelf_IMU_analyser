@@ -7,13 +7,13 @@ Created on Mon Sep 14 12:00:52 2020
 
 import csv
 import os.path
-from OS_Interpolation_lin_Xsens import DOT_interpolation_lin
-from OS_Interpolation_lin_Vicon import TS_interpolation_lin
+from OS_Interpolation_slerp_Xsens import Xsens_interpolation_slerp
+from OS_Interpolation_slerp_Vicon import Vicon_interpolation_slerp
 from OS_reset_heading import reset_heading
+from scipy.spatial.transform import Rotation as R
 
 
-
-def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq):
+def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay, t_range):
     
 #------------------------------------------------------------------------------
 #---import csv data------------------------------------------------------------
@@ -102,13 +102,15 @@ def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq):
     
 #------------------------------------------------------------------------------
 #---interpolation--------------------------------------------------------------
+
+
         if sensor == 'Xsens':
             length = len(PacketCounter)
-            PacketCounter,SampleTimeFine,Quat_w,Quat_x, Quat_y, Quat_z = DOT_interpolation_lin(PacketCounter,SampleTimeFine,Quat_w,Quat_x, Quat_y, Quat_z)
+            PacketCounter,SampleTimeFine,Quat_w,Quat_x, Quat_y, Quat_z = Xsens_interpolation_slerp(t_range,t_calib,freq, PacketCounter,SampleTimeFine,Quat_w,Quat_x, Quat_y, Quat_z)            
             length = len(PacketCounter)               
         if sensor == 'Vicon':
             length = len(time_s)
-            time_s ,Quat_w, Quat_x, Quat_y, Quat_z = TS_interpolation_lin(freq,time_s,Quat_w,Quat_x, Quat_y, Quat_z)
+            time_s ,Quat_w, Quat_x, Quat_y, Quat_z = Vicon_interpolation_slerp(freq,time_s,delay,t_calib,Quat_w,Quat_x, Quat_y, Quat_z)
             PacketCounter = list(range(1,len(time_s)+1))
             length = len(time_s)
             
@@ -119,20 +121,33 @@ def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq):
         count = 0
         for x in range(length):
             # MatRowColumn,
-            Mat11raw[count] = 1-2*float(Quat_y[count])**2-2*float(Quat_z[count])**2
-            Mat12raw[count] = 2*float(Quat_x[count])*float(Quat_y[count])-2*float(Quat_w[count])*float(Quat_z[count])
-            Mat13raw[count] = 2*float(Quat_x[count])*float(Quat_z[count])+2*float(Quat_w[count])*float(Quat_y[count])
-            Mat21raw[count] = 2*float(Quat_x[count])*float(Quat_y[count])+2*float(Quat_w[count])*float(Quat_z[count])  
-            Mat22raw[count] = 1-2*float(Quat_x[count])**2-2*float(Quat_z[count])**2   
-            Mat23raw[count] = 2*float(Quat_y[count])*float(Quat_z[count])-2*float(Quat_w[count])*float(Quat_x[count])  
-            Mat31raw[count] = 2*float(Quat_x[count])*float(Quat_z[count])-2*float(Quat_w[count])*float(Quat_y[count])
-            Mat32raw[count] = 2*float(Quat_y[count])*float(Quat_z[count])+2*float(Quat_w[count])*float(Quat_x[count])
-            Mat33raw[count] = 1-2*float(Quat_x[count])**2-2*float(Quat_y[count])**2
-            count += 1
-
+            # Mat11raw[count] = 1-2*float(Quat_y[count])**2-2*float(Quat_z[count])**2
+            # Mat12raw[count] = 2*float(Quat_x[count])*float(Quat_y[count])-2*float(Quat_w[count])*float(Quat_z[count])
+            # Mat13raw[count] = 2*float(Quat_x[count])*float(Quat_z[count])+2*float(Quat_w[count])*float(Quat_y[count])
+            # Mat21raw[count] = 2*float(Quat_x[count])*float(Quat_y[count])+2*float(Quat_w[count])*float(Quat_z[count])  
+            # Mat22raw[count] = 1-2*float(Quat_x[count])**2-2*float(Quat_z[count])**2   
+            # Mat23raw[count] = 2*float(Quat_y[count])*float(Quat_z[count])-2*float(Quat_w[count])*float(Quat_x[count])  
+            # Mat31raw[count] = 2*float(Quat_x[count])*float(Quat_z[count])-2*float(Quat_w[count])*float(Quat_y[count])
+            # Mat32raw[count] = 2*float(Quat_y[count])*float(Quat_z[count])+2*float(Quat_w[count])*float(Quat_x[count])
+            # Mat33raw[count] = 1-2*float(Quat_x[count])**2-2*float(Quat_y[count])**2
+            # count += 1
+            
+            Matraw = R.as_matrix(R.from_quat([Quat_x[count],Quat_y[count],Quat_z[count],Quat_w[count]]))
+            Mat11raw[count] = Matraw[0][0]
+            Mat12raw[count] = Matraw[0][1]
+            Mat13raw[count] = Matraw[0][2]
+            Mat21raw[count] = Matraw[1][0]
+            Mat22raw[count] = Matraw[1][1]
+            Mat23raw[count] = Matraw[1][2]
+            Mat31raw[count] = Matraw[2][0]
+            Mat32raw[count] = Matraw[2][1]
+            Mat33raw[count] = Matraw[2][2]
+                        
+            count+=1
+            
         
-#---reset heading-------------------------------------------------------------
-        Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33 = reset_heading(sensor,freq, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw)    
+#---reset heading--------------------------------------------------------------        
+        Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33 = reset_heading(sensor,freq,delay, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw)    
         
 
 #---create .txt files----------------------------------------------------------
