@@ -16,11 +16,11 @@ api = MoveshelfApi()
 
 # from OS_trialsetup import trialsetup
 from OS_IMUmappings import IMUmappings
+from OS_findFirst_t import findFirst_t
 from OS_csv_to_txt import csv_to_txt
 from OS_IMUDataConversion import IMUdata_conversion
 from OS_CalibrateModel import calibrate_model
 from OS_InvKin import inv_kinematics
-from OS_sync_tridents import sync_tridents
 from OS_createAngles_json import createAngles_json
 from OS_investigateJoints import investigateJoints
 from OS_plotJointangles import plotJointangles
@@ -28,7 +28,7 @@ from OS_plotQuaternions import plotQuats
 
 class Application:
     
-    TrialName = '20201111_8'
+    TrialName = '20201120_1'
     modelFileName = 'OpenSim_model.osim'          # The path to input model
     customIMUplacer = False                        # Use custom IMU placement on calibrated model? just for looks ^^
     visualizeCalibration = True                     # Visualize calibrated model?
@@ -116,18 +116,18 @@ class Application:
         
         #---convert output data .csv files to .txt in useable format 
         #   and perform interpolation and heading reset
-        count = 0
         t0 = [0]*len(IMUs)
-        txtfilenames = [0]*len(IMUs)
         
-        for x in files:
-            
-            print('{}'.format(IMUs[count]))
-            t0[count],txtfilenames[count] = csv_to_txt(sensor,trial_dir_path, files[count], device, t_calib, freq, delay, t_range)
+        count = 0
+        for csvfilename in files:
+            t0[count] = findFirst_t(sensor, trial_dir_path, csvfilename, device)
             count += 1
-            
-        if sensor == 'Vicon':
-            sync_tridents(t0,txtfilenames,freq)    
+        
+        count = 0
+        for x in files:
+            print('{}'.format(IMUs[count]))
+            csv_to_txt(sensor, trial_dir_path, files[count], device, t_calib, freq, delay, t_range, t0)
+            count += 1
           
             
           

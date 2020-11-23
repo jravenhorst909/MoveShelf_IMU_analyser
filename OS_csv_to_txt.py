@@ -9,11 +9,12 @@ import csv
 import os.path
 from OS_Interpolation_slerp_Xsens import Xsens_interpolation_slerp
 from OS_Interpolation_slerp_Vicon import Vicon_interpolation_slerp
+from OS_sync_tridents import sync_tridents
 from OS_reset_heading import reset_heading
 from scipy.spatial.transform import Rotation as R
 
 
-def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay, t_range):
+def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay, t_range, t0):
     
 #------------------------------------------------------------------------------
 #---import csv data------------------------------------------------------------
@@ -145,7 +146,11 @@ def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay,
                         
             count+=1
             
-        
+#---sync Tridents--------------------------------------------------------------
+        if sensor == 'Vicon':
+            time_s,PacketCounter, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw = sync_tridents(time_s,t0,PacketCounter, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw)
+
+
 #---reset heading--------------------------------------------------------------        
         Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33 = reset_heading(sensor,freq,delay, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw)    
         
@@ -188,11 +193,7 @@ def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay,
                         break 
                 
 
-#---return time point of first sample----------------------------------------------------------
-    if sensor =='Xsens':
-        return(SampleTimeFine[0],completename)
-    if sensor == 'Vicon':
-        return(time_s[t_calib*freq],completename)        
+      
         
         
         
