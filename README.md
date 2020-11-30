@@ -37,6 +37,9 @@ The default setup of the file system is as follows:
 	- OS_reset_heading.py
 	- OS_sync_tridents.py
 
+	Note: If you would like to use an OpenSim model (.osim) other than the one provided, then changes may have to be implemented in OS_investigateJoints.py and 	S_createAngle_json.py.
+
+
 2.1.	Main folder:
 - Additional files will be created in this folder upon processing trials. If these already exist, they will be overwritten:
 	- “err.txt” 
@@ -60,7 +63,7 @@ Contains all trial folders and “setup_format.txt”.
 - “setup.txt” is a file that has to be copied to any trial folder before processing! This file is a fill-in file, requesting info about the measurement.
 
 
-3.	Measurement Manual (Vicon Trident and Xsens DOT)
+3.	Measurement Manual (Vicon Blue Trident and Xsens DOT)
 These are the steps needed to do a measurement:
 
 3.1.	Digital setup.
