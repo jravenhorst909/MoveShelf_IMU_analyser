@@ -28,7 +28,7 @@ from OS_plotQuaternions import plotQuats
 
 class Application:
     
-    TrialName = '20201120_1'
+    TrialName = '20201124_1'
     modelFileName = 'OpenSim_model.osim'          # The path to input model
     customIMUplacer = False                        # Use custom IMU placement on calibrated model? just for looks ^^
     visualizeCalibration = True                     # Visualize calibrated model?
@@ -39,7 +39,8 @@ class Application:
     def IMUanalyser(self,TrialName,modelFileName,visualizeCalibration,visualizeTracking,UploadFiles):
         
         delay = 60          # after how many seconds is Vicon's heading stable?
-        
+        sensor_to_opensim_rotation = osim.Vec3(-pi/2,0,0)	# The rotation of IMU data to the OpenSim world frame. !! Only change if subject/model is not facing x-direction in the calibration pose. 
+
         
         
         #------------------------------------------------------------------------------
@@ -96,14 +97,13 @@ class Application:
         
         device = ldic['device']
         freq = ldic['freq']
-        t_calib = ldic['t_calib']-delay
+        t_calib = ldic['t_calib']  # -delay
         t_range = ldic['t_range']
         baseIMUName = ''
         baseIMUHeading = ''
         IMUs = ldic['IMUs']
     
         t_range = [t_range[0]-t_calib, t_range[1]-t_calib]
-        sensor_to_opensim_rotation = osim.Vec3(-pi/2,0,0)	# The rotation of IMU data to the OpenSim world frame. !! Only change if subject/model is not facing x-direction in the calibration pose. 
         
         
         #---which joints are involved?

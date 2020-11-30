@@ -21,7 +21,7 @@ def Vicon_interpolation_slerp(freq,time_s,delay,t_calib,Quat_w,Quat_x, Quat_y, Q
     
     time_original = time_s
     
-    i_start = (delay-(t_calib))*freq
+    i_start = (0)*freq # (delay-(t_calib))*freq
     t_start = time_s[i_start]    
 
 
@@ -67,21 +67,27 @@ def Vicon_interpolation_slerp(freq,time_s,delay,t_calib,Quat_w,Quat_x, Quat_y, Q
         x += 1 
     
     orientations_intpl = slerp(time_s)
-    quats_intpl = orientations_intpl.as_quat()    
     
+    quats_intpl = orientations_intpl.as_quat() 
     Quat_x = quats_intpl[:,0]
     Quat_y = quats_intpl[:,1]
     Quat_z = quats_intpl[:,2]
     Quat_w = quats_intpl[:,3]
     
+    euler_intpl = orientations_intpl.as_euler('xyz',degrees=True)
+    euler_roll = euler_intpl[:,0]       # x
+    euler_pitch = euler_intpl[:,1]      # y
+    euler_yaw = euler_intpl[:,2]        # z
     
     
     #--->plot------------------------------------------------------------------
     quats_post = [0]*len(time_s[time_s.index(t_start):])
+    euler_post = [0]*len(quats_post)
     time = time_s[time_s.index(t_start):]
     
     for index in range(time_s.index(t_start),len(Quat_w)):
         quats_post[index-time_s.index(t_start)] = [Quat_x[index],Quat_y[index],Quat_z[index],Quat_w[index]]
+        euler_post[index-time_s.index(t_start)] = [euler_roll[index],euler_pitch[index],euler_yaw[index]]
         
     plt.figure()
     plt.plot(time,quats_post) 
@@ -89,7 +95,17 @@ def Vicon_interpolation_slerp(freq,time_s,delay,t_calib,Quat_w,Quat_x, Quat_y, Q
     plt.ylabel('quaternion')
     plt.xlabel('time [s]')
     plt.legend(['qx','qy','qz','qw'])
-    plt.title('post intpl') 
+    plt.title('quats post intpl') 
+    
+    plt.figure()
+    plt.plot(time,euler_post) 
+    
+    plt.ylabel('Euler angle [deg]')
+    plt.xlabel('time [s]')
+    plt.legend(['roll','pitch','yaw'])
+    plt.title('euler post intpl')     
+    
+    
     #---<plot------------------------------------------------------------------        
         
     
