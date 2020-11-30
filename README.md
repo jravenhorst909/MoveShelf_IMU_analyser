@@ -1,4 +1,4 @@
-This package is able to process data from Xsens DOT and Vicon Trident sensors. You can choose to analyse the results in the console, or to upload your results to MoveShelf to organise, analyse and share your results. 
+This package is able to do full body motion analysis with data from Xsens DOT and Vicon Blue Trident sensors. You can choose to analyse the results in the console, or to upload your results to MoveShelf to organise, analyse and share your results. 
 
 
 **1.	Requirements**
