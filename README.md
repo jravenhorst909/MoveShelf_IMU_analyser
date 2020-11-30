@@ -1,7 +1,5 @@
 This package is able to process data from Xsens DOT and Vicon Trident sensors. You can choose to analyse the results in the console, or to upload your results to MoveShelf to organise, analyse and share your results. 
 
-Note:
-You can do full body analysis, but “OS_investigateJoints.py” is in this version only able to recognise lower body joints. If you would like to upload upper body joint analysis to MoveShelf, you can easily expand this function.
 
 **1.	Requirements**
 
