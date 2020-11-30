@@ -37,7 +37,7 @@ The default setup of the file system is as follows:
 	- OS_reset_heading.py
 	- OS_sync_tridents.py
 
-	Note: If you would like to use an OpenSim model (.osim) other than the one provided, then changes may have to be implemented in OS_investigateJoints.py and 	S_createAngle_json.py.
+	Note: If you would like to use an OpenSim model (.osim) other than the one provided, then changes may have to be implemented in OS_investigateJoints.py and 	OS_createAngle_json.py.
 
 
 2.1.	Main folder:
