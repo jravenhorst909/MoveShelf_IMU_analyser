@@ -3,11 +3,11 @@ This package is able to process data from Xsens DOT and Vicon Trident sensors. Y
 Note:
 You can do full body analysis, but “OS_investigateJoints.py” is in this version only able to recognise lower body joints. If you would like to upload upper body joint analysis to MoveShelf, you can easily expand this function.
 
-1.	Requirements
+**1.	Requirements**
 
 1.1	Python 3.7 and OpenSim 4.1. Install the opensim python package as described here: https://simtk-confluence.stanford.edu/display/OpenSim/Scripting+in+Python#ScriptinginPython-SettingupyourPythonscriptingenvironment 
 
-2.	Folders and files
+**2.	Folders and files**
 The default setup of the file system is as follows:
 
 - MoveShelf_IMU_analyser	> main folder, place it anywhere on computer.
@@ -63,7 +63,7 @@ Contains all trial folders and “setup_format.txt”.
 - “setup.txt” is a file that has to be copied to any trial folder before processing! This file is a fill-in file, requesting info about the measurement.
 
 
-3.	Measurement Manual (Vicon Blue Trident and Xsens DOT)
+**3.	Measurement Manual (Vicon Blue Trident and Xsens DOT)**
 These are the steps needed to do a measurement:
 
 3.1.	Digital setup.
@@ -91,7 +91,7 @@ Perform the motion you want to measure. Note the beginning and end time in “se
 3.7.	Stop measurement.
 Stop the measurement in the mobile application. The data files are stored on the phone itself.
 
-4.	Processing
+**4.	Processing**
 
 4.1.	Import the sensor output files (.csv) to the trial folder.
 
