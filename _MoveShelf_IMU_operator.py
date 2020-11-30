@@ -9,9 +9,9 @@ from OpenSense_Main import Application
 app = Application()
 
 
-TrialName = '20201120_1'                                  # Should include date and trial number.
+TrialName = '20201127_13'                                  # Should include date and trial number.
 modelFileName = 'OpenSim_model.osim'             # The path to input model.
-visualizeCalibration = True                      # Visualize calibrated model?
+visualizeCalibration = False                      # Visualize calibrated model?
 visualizeTracking = False                        # Visualize motion?
 UploadFiles = False                              # Create a new clip and upload all files.
 
