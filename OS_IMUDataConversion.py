@@ -21,17 +21,21 @@ def IMUdata_conversion(trial_dir_path,TrialName):
     quatTable = xsens.getOrientationsTable(tables)
     # Write to file
     osim.STOFileAdapterQuaternion.write(quatTable, trial_dir_path +'/'+ trialID + '_orientations.sto')
-    # Get Acceleration Data
-    accelTable = xsens.getLinearAccelerationsTable(tables)
-    # Write to file
-    osim.STOFileAdapterVec3.write(accelTable, trial_dir_path +'/'+ trialID + '_linearAccelerations.sto')
-    # Get Magnetic (North) Heading Data
-    magTable = xsens.getMagneticHeadingTable(tables)
-    # Write to file
-    osim.STOFileAdapterVec3.write(magTable, trial_dir_path +'/'+ trialID + '_magneticNorthHeadings.sto')
-    # Get Angular Velocity Data
-    angVelTable = xsens.getAngularVelocityTable(tables)
-    # Write to file
-    osim.STOFileAdapterVec3.write(angVelTable, trial_dir_path +'/'+ trialID + '_angularVelocities.sto')
+    
+    
+    # OPTIONAL:
+    
+    # # Get Acceleration Data
+    # accelTable = xsens.getLinearAccelerationsTable(tables)
+    # # Write to file
+    # osim.STOFileAdapterVec3.write(accelTable, trial_dir_path +'/'+ trialID + '_linearAccelerations.sto')
+    # # Get Magnetic (North) Heading Data
+    # magTable = xsens.getMagneticHeadingTable(tables)
+    # # Write to file
+    # osim.STOFileAdapterVec3.write(magTable, trial_dir_path +'/'+ trialID + '_magneticNorthHeadings.sto')
+    # # Get Angular Velocity Data
+    # angVelTable = xsens.getAngularVelocityTable(tables)
+    # # Write to file
+    # osim.STOFileAdapterVec3.write(angVelTable, trial_dir_path +'/'+ trialID + '_angularVelocities.sto')
     
     return trialID

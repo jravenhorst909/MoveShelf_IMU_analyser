@@ -16,8 +16,11 @@ def IMUmappings(sensor,trial_dir_path,files, IMUs):
 #------------------------------------------------------------------------------
 #---sensor Xsens---------------------------------------------------------------
     if sensor == 'Xsens':
-        DOT_numbers = ["%.2d" % i for i in range(len(files)+1)]
-        del DOT_numbers[0]
+        DOT_numbers = [0]*len(files)
+        count = 0
+        for file in files:
+            DOT_numbers[count] = file[10:12]
+            count += 1
         
         #---OpenSimDocument
         root = Element('OpenSimDocument')
@@ -52,9 +55,7 @@ def IMUmappings(sensor,trial_dir_path,files, IMUs):
         #--- this file needs to be in the same folder as main script
         tree.write('myIMUmappings.xml')      
         
-# optionally use ana cmd window:
-        # cd C:\Users\Joris Ravenhorst\Documents\_joris_docs\MoveShelf\opensim_python
-        # opensense -ReadXsens IMUData_20200910_gait/ myIMUmappings.xml
+
     
 #------------------------------------------------------------------------------
 #---sensor Vicon---------------------------------------------------------------    
@@ -98,9 +99,7 @@ def IMUmappings(sensor,trial_dir_path,files, IMUs):
         #--- this file needs to be in the parent directory of the directory with IMU data txt files
         tree.write('myIMUmappings.xml')      
         
-# optionally use ana cmd window:
-        # cd C:\Users\Joris Ravenhorst\Documents\_joris_docs\MoveShelf\opensim_python
-        # opensense -ReadXsens IMUData_20200910_gait/ myIMUmappings.xml    
+ 
     
     
     

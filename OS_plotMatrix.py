@@ -11,12 +11,9 @@ import matplotlib.animation as animation
 
 def plotMatrix(freq,t_calib,delay, Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33):
 
-    # Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33 = Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw
-    # i_calib = freq*(delay+t_calib)
-    
-    Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33 = Mat11pre_intpl,Mat21pre_intpl,Mat31pre_intpl,Mat12pre_intpl,Mat22pre_intpl,Mat32pre_intpl,Mat13pre_intpl,Mat23pre_intpl,Mat33pre_intpl
-    i_calib = 0
-    
+    i_calib = freq*(t_calib)
+   
+  
     
     
     MatX = [0]*len(Mat11[i_calib:])

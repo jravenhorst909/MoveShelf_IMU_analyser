@@ -13,7 +13,7 @@ def createAngles_json(trial_dir_path,joints):
     # The joint angles are retrieved from "orientations.mot".
     # Investigate joints determines which joints were monitored. 
     
-    # IF YOU WOULD LIKE TO EXTEND FUNCTIONALITY TO UPPER BODY:
+
     
     for file in os.listdir(trial_dir_path):
         if file.endswith('.mot'):

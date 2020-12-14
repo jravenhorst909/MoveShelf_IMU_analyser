@@ -106,11 +106,9 @@ def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay,
 
 
         if sensor == 'Xsens':
-            length = len(PacketCounter)
             PacketCounter,SampleTimeFine,Quat_w,Quat_x, Quat_y, Quat_z = Xsens_interpolation_slerp(t_range,t_calib,freq, PacketCounter,SampleTimeFine,Quat_w,Quat_x, Quat_y, Quat_z)            
             length = len(PacketCounter)               
         if sensor == 'Vicon':
-            length = len(time_s)
             time_s ,Quat_w, Quat_x, Quat_y, Quat_z = Vicon_interpolation_slerp(freq,time_s,delay,t_calib,Quat_w,Quat_x, Quat_y, Quat_z)
             PacketCounter = list(range(1,len(time_s)+1))
             length = len(time_s)
@@ -121,17 +119,6 @@ def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay,
         
         count = 0
         for x in range(length):
-            # MatRowColumn,
-            # Mat11raw[count] = 1-2*float(Quat_y[count])**2-2*float(Quat_z[count])**2
-            # Mat12raw[count] = 2*float(Quat_x[count])*float(Quat_y[count])-2*float(Quat_w[count])*float(Quat_z[count])
-            # Mat13raw[count] = 2*float(Quat_x[count])*float(Quat_z[count])+2*float(Quat_w[count])*float(Quat_y[count])
-            # Mat21raw[count] = 2*float(Quat_x[count])*float(Quat_y[count])+2*float(Quat_w[count])*float(Quat_z[count])  
-            # Mat22raw[count] = 1-2*float(Quat_x[count])**2-2*float(Quat_z[count])**2   
-            # Mat23raw[count] = 2*float(Quat_y[count])*float(Quat_z[count])-2*float(Quat_w[count])*float(Quat_x[count])  
-            # Mat31raw[count] = 2*float(Quat_x[count])*float(Quat_z[count])-2*float(Quat_w[count])*float(Quat_y[count])
-            # Mat32raw[count] = 2*float(Quat_y[count])*float(Quat_z[count])+2*float(Quat_w[count])*float(Quat_x[count])
-            # Mat33raw[count] = 1-2*float(Quat_x[count])**2-2*float(Quat_y[count])**2
-            # count += 1
             
             Matraw = R.as_matrix(R.from_quat([Quat_x[count],Quat_y[count],Quat_z[count],Quat_w[count]]))
             Mat11raw[count] = Matraw[0][0]
@@ -149,7 +136,7 @@ def csv_to_txt(sensor,trial_dir_path, csvfilename, device, t_calib, freq, delay,
 #---sync Tridents--------------------------------------------------------------
         if sensor == 'Vicon':
             time_s,PacketCounter, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw = sync_tridents(time_s,t0,PacketCounter, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw)
-
+            length = len(time_s)
 
 #---reset heading--------------------------------------------------------------        
         Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33 = reset_heading(sensor,freq,delay, Mat11raw,Mat21raw,Mat31raw,Mat12raw,Mat22raw,Mat32raw,Mat13raw,Mat23raw,Mat33raw)    

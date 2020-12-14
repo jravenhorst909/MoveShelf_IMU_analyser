@@ -22,7 +22,7 @@ def Xsens_interpolation_slerp(t_range,t_calib,freq, PacketCounter,SampleTimeFine
     
     time_original = SampleTimeFine
     
-    i_start = freq*(t_calib)
+    i_start = 0 # freq*(t_calib)
      
     
     
@@ -34,13 +34,13 @@ def Xsens_interpolation_slerp(t_range,t_calib,freq, PacketCounter,SampleTimeFine
         quats_pre[index-i_start] = [Quat_x[index],Quat_y[index],Quat_z[index],Quat_w[index]]
         time[index-i_start] = (SampleTimeFine[index] - SampleTimeFine[0])/1000000  - (t_calib) 
         
-    plt.figure()
-    plt.plot(time,quats_pre) 
+    # plt.figure()
+    # plt.plot(time,quats_pre) 
     
-    plt.ylabel('quaternion')
-    plt.xlabel('time [s]')
-    plt.legend(['qx','qy','qz','qw'])
-    plt.title('pre intpl')
+    # plt.ylabel('quaternion')
+    # plt.xlabel('time [s]')
+    # plt.legend(['qx','qy','qz','qw'])
+    # plt.title('pre intpl')
     #---<plot------------------------------------------------------------------
     
     
@@ -78,23 +78,36 @@ def Xsens_interpolation_slerp(t_range,t_calib,freq, PacketCounter,SampleTimeFine
     Quat_z = quats_intpl[:,2]
     Quat_w = quats_intpl[:,3]
 
-
+    euler_intpl = orientations_intpl.as_euler('xyz',degrees=True)
+    euler_roll = euler_intpl[:,0]       
+    euler_pitch = euler_intpl[:,1]      
+    euler_yaw = euler_intpl[:,2]        
 
     #--->plot------------------------------------------------------------------
     quats_post = [0]*len(SampleTimeFine[i_start:])
+    euler_post = [0]*len(quats_post)
     time = [0]*len(SampleTimeFine[i_start:])
     
     for index in range(i_start,len(Quat_w)):
         quats_post[index-i_start] = [Quat_x[index],Quat_y[index],Quat_z[index],Quat_w[index]]
+        euler_post[index-i_start] = [euler_roll[index],euler_pitch[index],euler_yaw[index]]
         time[index-i_start] = (SampleTimeFine[index] - SampleTimeFine[0] - (t_range[0]+t_calib) )/1000000  - (t_calib) 
         
-    plt.figure()
-    plt.plot(time,quats_post) 
+    # plt.figure()
+    # plt.plot(time,quats_post) 
     
-    plt.ylabel('quaternion')
+    # plt.ylabel('quaternion')
+    # plt.xlabel('time [s]')
+    # plt.legend(['qx','qy','qz','qw'])
+    # plt.title('post intpl')
+    
+    plt.figure()
+    plt.plot(time,euler_post) 
+    
+    plt.ylabel('Euler angle [deg]')
     plt.xlabel('time [s]')
-    plt.legend(['qx','qy','qz','qw'])
-    plt.title('post intpl')
+    plt.legend(['roll','pitch','yaw'])
+    plt.title('euler post intpl') 
     #---<plot------------------------------------------------------------------
 
 
