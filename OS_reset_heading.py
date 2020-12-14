@@ -43,7 +43,6 @@ def reset_heading(sensor,freq,delay, Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,M
         count += 1
         
     
-    # Mat11new,Mat21new,Mat31new,Mat12new,Mat22new,Mat32new,Mat13new,Mat23new,Mat33new=Mat11,Mat21,Mat31,Mat12,Mat22,Mat32,Mat13,Mat23,Mat33
     
     
     return(Mat11new,Mat21new,Mat31new,Mat12new,Mat22new,Mat32new,Mat13new,Mat23new,Mat33new)

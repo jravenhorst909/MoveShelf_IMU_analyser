@@ -21,9 +21,8 @@ def plotQuats_v2(time_s,Quat_w,Quat_x, Quat_y, Quat_z):
 
       
     plt.figure()
-    plt.plot(time_s,quats) #,Quat_x, Quat_y, Quat_z)
+    plt.plot(time_s,quats) 
     
     plt.ylabel('quaternion')
     plt.xlabel('time [s]')
     plt.legend(['qx','qy','qz','qw'])
-    # plt.title()

@@ -11,6 +11,8 @@ import glob
 import time
 import opensim as osim # necessary to read setup file
 from numpy import pi # necessary to read setup file
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+
 from api import MoveshelfApi, Metadata
 api = MoveshelfApi()
 
@@ -28,17 +30,9 @@ from OS_plotQuaternions import plotQuats
 
 class Application:
     
-    TrialName = '20201124_1'
-    modelFileName = 'OpenSim_model.osim'          # The path to input model
-    customIMUplacer = False                        # Use custom IMU placement on calibrated model? just for looks ^^
-    visualizeCalibration = True                     # Visualize calibrated model?
-    visualizeTracking = False                       # Visualize motion?
-    
-    UploadFiles = False                              # Create a new clip and upload all files.
     
     def IMUanalyser(self,TrialName,modelFileName,visualizeCalibration,visualizeTracking,UploadFiles):
         
-        delay = 60          # after how many seconds is Vicon's heading stable?
         sensor_to_opensim_rotation = osim.Vec3(-pi/2,0,0)	# The rotation of IMU data to the OpenSim world frame. !! Only change if subject/model is not facing x-direction in the calibration pose. 
 
         
@@ -47,7 +41,7 @@ class Application:
         # %% Setup
         #   -if uploading: to which project?
         #   -Find .csv IMU data and setup.txt.
-        #   -Creates 'myIMUMappings.xml'' : which IMU belongs to which body segment.
+        #   -Creates 'myIMUMappings.xml' : which IMU belongs to which body segment.
         #   -Resets the heading of all IMUs to 0 yaw in initial timestep. Assuming all IMUs are aligned.
         #   -Applies heading reset to whole dataset so all IMU orientations are relative to a shared initial position.
         #   -Cuts pre-calibration data from dataset.
@@ -65,7 +59,11 @@ class Application:
                 count += 1
                    
             project_no = int(input('enter project number:\n'))
-            print('thanks\n')
+            
+            print('\ndid you record a video with Vicon Blue Trident?:\n[0] Yes\n[1] No')
+            uploadvideo = int(input('enter number:\n'))
+            
+            print('\nthanks\n')
             
             
         #---find data and setup
@@ -97,8 +95,9 @@ class Application:
         
         device = ldic['device']
         freq = ldic['freq']
-        t_calib = ldic['t_calib']  # -delay
+        t_calib = ldic['t_calib']  
         t_range = ldic['t_range']
+        delay = ldic['delay']
         baseIMUName = ''
         baseIMUHeading = ''
         IMUs = ldic['IMUs']
@@ -137,22 +136,21 @@ class Application:
         #   -If no such data is provided, the file is left empty.
         trialID = IMUdata_conversion(trial_dir_path,TrialName)
         
-        plotQuats(trial_dir_path, trialID)
-        time.sleep(1)
+        # plotQuats(trial_dir_path, trialID)
+
         
         
         
         #------------------------------------------------------------------------------
         # %% CalibrateModel
         #   -Create a calibrated .osim model.
-        #   -Optionally use custom IMU placement
         calibrate_model(trial_dir_path,trialID,modelFileName,sensor_to_opensim_rotation,baseIMUName,baseIMUHeading,visualizeCalibration)
            
         
         
         #------------------------------------------------------------------------------
         # %% InverseKinematics
-        #   -Perform Opensim's inverse kinematics.
+        #   -Perform Opensim's inverse kinematics. Creates .mot file describing all joint angles.
         inv_kinematics(trial_dir_path,trialID,modelFileName,t_range,sensor_to_opensim_rotation,visualizeTracking)
         
         
@@ -200,9 +198,21 @@ class Application:
                 datafile_path = trial_dir_path+filename
                 dataType = filename[ -( filename[::-1].index('.') +1 ): ]
                 
+                
                 if dataType != '.json':
-                    api.uploadAdditionalData(datafile_path, self.clipID, dataType, filename) # uploads additional data, returns data ID
-            
+                    if dataType == '.mp4':
+                        if filename != "video_cut.mp4":
+                            # optionally cut Trident video
+                            if uploadvideo == 0:
+                                ffmpeg_extract_subclip(datafile_path, 10, 12, targetname=trial_dir_path+"video_cut.mp4")    
+                                # ffmpeg_extract_subclip(datafile_path, t_range[0], t_range[1], targetname=trial_dir_path+"video_cut.mp4")    
+                                api.uploadAdditionalData(trial_dir_path+"video_cut.mp4", self.clipID, 'video', "video_cut.mp4")
+                            if uploadvideo == 1:
+                                api.uploadAdditionalData(trial_dir_path+filename, self.clipID, 'video', filename)
+                                           
+                    if dataType != '.mp4': 
+                        api.uploadAdditionalData(datafile_path, self.clipID, dataType, filename) # uploads additional data, returns data ID
+                
             print('\t ...done!')
         
     

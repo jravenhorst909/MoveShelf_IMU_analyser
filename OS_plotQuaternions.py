@@ -7,8 +7,6 @@ Created on Thu Nov 12 16:50:14 2020
 
 import matplotlib.pyplot as plt
 
-# trial_dir_path = 'C:/Users\Joris Ravenhorst/Documents/_joris_docs/MoveShelf/opensim_python/MoveShelf_IMU_analyser/IMUData/20201111_1 knee flexion/'
-# trialID = '20201111_121633'
 
 def plotQuats(trial_dir_path, trialID):
     with open(trial_dir_path + trialID + '_orientations.sto') as file:
