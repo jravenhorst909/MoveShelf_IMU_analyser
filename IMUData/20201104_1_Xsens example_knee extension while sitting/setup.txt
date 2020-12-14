@@ -1,0 +1,10 @@
+device = 'apple'			# phone operating system 'apple' or 'android'?
+freq = 60 			# sampling frequency of IMUs [Hz]
+t_calib = 47 			# timepoint in measurement when calibration pose is performed, [s]
+t_range = [52,68]			# time range to process/visualize, [s]
+
+# For Vicon Blue Tridents:
+delay = ''			# time point at which IMUs are aligned after sensor calibration.
+
+# list body segments to corresponding imus. in imu order (increasing number): ['imu_01', 'imu_02', 'imu_03' ...
+IMUs = ['femur_l','tibia_l'] 
