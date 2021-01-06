@@ -1,8 +1,0 @@
-device = 'apple'			# phone operating system 'apple' or 'android'?
-freq = 225 			# sampling frequency of IMUs [Hz]
-t_calib = 70 			# timepoint in measurement when calibration pose is performed, [s]
-t_range = [80,120]			# time range to process/visualize, [s]
-
-
-# list body segments to corresponding imus. in imu order (increasing number): ['imu_01', 'imu_02', 'imu_03' ...
-IMUs = ['pelvis'] 
